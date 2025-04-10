@@ -14,6 +14,7 @@ class App extends Component {
           },
           descricao: `🐾 Muito dócil, gosta de crianças, se dá bem com gatos e outros animais! Ela pede carinho com a patinha e ama carinho na barriga.
 ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
+          detalhes: "Vacina? Sim! \nVermífugo? Sim! \nLocalização: Octogonal. \nIdade: 1 ano. \nRaça: sem raça definida. \nCastrada? Não. \nPorte pequeno, esperando por um lar acolhedor. \nQue tal dar essa chance única a ele?",
         },
         {
           id: 2,
@@ -23,6 +24,7 @@ class App extends Component {
           },
           descricao: `🐾 Super amorosa e adorável!
 ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
+          detalhes: "Vacina? Sim! \nVermífugo? Sim! \nLocalização: Ponte Alta. \nIdade: dois meses. \nRaça: sem raça definida. \nCastrada? Sim! \nFilhote saudável e pronto para adoção. \nQue tal dar um lar amoroso?",
         },
         {
           id: 3,
@@ -32,6 +34,7 @@ class App extends Component {
           },
           descricao: `🐈 Se dá bem com todo mundo, extremamente carinhoso e carente. Adora carinho no pescoço e cabeça.
 ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
+          detalhes: "Vacina: sim, faltando apenas a múltipla. \nVermífugo: sim. \nLocalização: Lago Norte. \nIdade: 2 anos. \nRaça: sem raça definida. \nCastrada: não. \nPrecisa de cuidados e atenção para ser castrada.",
         },
         {
           id: 4,
@@ -39,8 +42,9 @@ class App extends Component {
           imagem: {
             uri: "https://i.pinimg.com/736x/7a/fc/40/7afc4012cdddd2cfececb8d66683ec36.jpg",
           },
-          descricao: `🐤 Irritadinho, não se dá muito bem com animais de outras espécies, mas gosta de humanos. Gosta de um carinho ou outro na cabeça, mas prefere ficar no próprio canto.
-⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
+          descricao: `🐤 Irritadinho, não se dá muito bem com animais de outras espécies, mas gosta de humanos. Gosta de um carinho ou outro na cabeça, mas prefere ficar no próprio canto. 
+          ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
+          detalhes: "Vacina: sim. \nVermífugo: sim. \nLocalização: Candangolândia. \nIdade: 1 mês. \nRaça: calopsita. \nCastrada: não. \nAsas cortadas: sim. \nEstá saudável, mas precisa de cuidados especiais devido às asas cortadas."
         },
         {
           id: 5,
@@ -48,16 +52,19 @@ class App extends Component {
           imagem: {
             uri: "https://i.pinimg.com/736x/65/45/09/654509a9f6c01b391f27e19096e20ba0.jpg",
           },
-          descricao: `🐾 Idosinho super saudável, muito companheiro, adora passear e correr atrás de pássaros. Ama descansar perto dos humanos.
-⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
-        },
+          descricao: `🐾 Idosinho super saudável, muito companheiro, adora passear e correr atrás de pássaros. Ama descansar perto dos humanos. 
+          ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
+          detalhes: "Vacina: sim, todas em dia. \nVermífugo: sim. \nLocalização: Planaltina. \nIdade: 9 anos. \nRaça: sem raça definida. \nCastrado: sim. \nEstá bem cuidado e com todas as necessidades atendidas."
+        }
       ],
+      animalSelecionado: null, // Armazena o ID do animal clicado
     };
   }
 
   handlePress(animalId) {
-    console.log(`Animal com ID ${animalId} foi clicado!`);
-    // Aqui você pode adicionar qualquer lógica que deseja executar quando o animal for clicado
+    this.setState({
+      animalSelecionado: this.state.animalSelecionado === animalId ? null : animalId, // Alterna entre mostrar e esconder detalhes
+    });
   }
 
   render() {
@@ -69,7 +76,7 @@ class App extends Component {
             fontSize: 40,
             marginTop: 30,
             fontFamily: "Pacifico",
-            marginLeft: 30,
+            textAlign: "center",
             marginBottom: 15,
           }}
         >
@@ -89,7 +96,7 @@ class App extends Component {
               shadowRadius: 3,
               elevation: 5,
             }}
-            onPress={() => this.handlePress(animal.id)} // Quando clicado, chama a função handlePress
+            onPress={() => this.handlePress(animal.id)} // Quando clicado, alterna os detalhes do animal
           >
             <View style={{ alignItems: "center", marginBottom: 10 }}>
               <Image
@@ -120,12 +127,36 @@ class App extends Component {
                 style={{
                   fontSize: 18,
                   fontFamily: "Roboto",
-                  textAlign: "justify",
+                  textAlign: "center",
                   lineHeight: 24,
+                  width: 300,
                 }}
               >
                 {animal.descricao}
               </Text>
+
+              {/* Mostra detalhes adicionais se o animal estiver selecionado */}
+              {this.state.animalSelecionado === animal.id && (
+                <View
+                  style={{
+                    marginTop: 10,
+                    padding: 10,
+                    backgroundColor: "#e6ffe6",
+                    borderRadius: 8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#006400",
+                      fontFamily: "Roboto",
+                      textAlign: "center",
+                    }}
+                  >
+                    {animal.detalhes}
+                  </Text>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         ))}
