@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity, Picker } from "react-native";
+import Slider from '@react-native-community/slider';
+import { Switch } from "react-native-web";
 
 class App extends Component {
   constructor(props) {
@@ -17,11 +19,12 @@ class App extends Component {
           vacina: "Sim",
           vermifugo: "Sim!",
           localizacao: "Octogonal",
-          idade: "1 ano",
+          idade: "1 ano", //ok
+          sexo: "Fêmea", //ok
           raca: "Sem raça definida",
-          castracao: "Não.",
-          porte: "Pequeno",
-          especie: "Cachorro",
+          castracao: "Não",
+          porte: "Pequeno", //ok
+          especie: "Cachorro", //ok
           detalhes: "Essa fofura está esperando por um lar acolhedor. \nQue tal dar essa chance única a ela?",
         },
         {
@@ -35,10 +38,11 @@ class App extends Component {
           vacina: "Sim!",
           vermifugo: "Sim!",
           localizacao: "Ponte Alta.",
-          idade: "dois meses.",
+          idade: "2 meses.",
+          sexo: "Fêmea",
           raca: "Sem raça definida",
-          castracao: "Sim!",
-          porte: "Médio.",
+          castracao: "Sim",
+          porte: "Médio",
           especie: "Cachorro",
           detalhes: "Filhote saudável e pronto para adoção. \nQue tal dar um lar amoroso?",
         },
@@ -54,9 +58,10 @@ class App extends Component {
           vermifugo: "sim.",
           localizacao: "Lago Norte.",
           idade: "2 anos.",
+          sexo: "Macho",
           raca: "Sem raça definida",
           castracao: "Não",
-          porte: "Pequeno.",
+          porte: "Pequeno",
           especie: "Gato",
           detalhes: "Precisa de cuidados e atenção para ser castrado.",
         },
@@ -72,9 +77,10 @@ class App extends Component {
           vermifugo: "Sim.",
           localizacao: "Candangolândia.",
           idade: "1 mês.",
+          sexo: "Macho",
           raca: "Calopsita",
           castracao: "Não",
-          porte: "Pequeno.",
+          porte: "Pequeno",
           especie: "Pássaro",
           detalhes: "Asas cortadas. \nEstá saudável, mas precisa de cuidados especiais."
         },
@@ -90,16 +96,21 @@ class App extends Component {
           vermifugo: "Sim.",
           localizacao: "Planaltina.",
           idade: "9 anos.",
+          sexo: "Macho",
           raca: "Calopsita",
-          castracao: "Sim.",
-          porte: "Grande.",
+          castracao: "Sim",
+          porte: "Grande",
           especie: "Cachorro",
           detalhes: "Está bem cuidado e com todas as necessidades atendidas."
         }
       ],
       animalSelecionado: null, // Armazena o ID do animal clicado
       especieSelecionada: "Todos",
+      sexoSelecionado: "Todos",
+      idadeSelecionada: "Todos",
       porteSelecionado: "Todos",
+      castracaoSelecionado: null,
+      vermifugoSelecionado: null,
     };
   }
 
@@ -113,18 +124,43 @@ class App extends Component {
     this.setState({ especieSelecionada: especie });
   };
 
-  handlePorteChange = (porte) => {
-    this.setState({ porteSelecionado: porte });
+  handleSexoChange = (sexo) => {
+    this.setState({ sexoSelecionado: sexo });
   };
 
+  normalizeIdade = (idadeString) => {
+    if (idadeString.includes("mês") || idadeString.includes("meses")) return 0;
+    const idadeNum = parseInt(idadeString);
+    return isNaN(idadeNum) ? 0 : idadeNum;
+  }
+
   render() {
-    const especies = ["Selecione a espécie", "Cachorro", "Gato", "Pássaro"];
-    const portes = ["Selecione o porte", "Pequeno", "Médio", "Grande"];
-    const { especieSelecionada, porteSelecionado, animais } = this.state;
+    const especies = ["Todos", "Cachorro", "Gato", "Pássaro"];
+    const sexos = ["Todos", "Fêmea", "Macho"];
+    const portes = ["Todos", "Pequeno", "Médio", "Grande"];
+    const { especieSelecionada, sexoSelecionado, animais } = this.state;
     const animaisFiltrados = animais.filter((animal) => {
       const especieMatch = especieSelecionada === "Todos" || animal.especie === especieSelecionada;
-      const porteMatch = porteSelecionado === "Todos" || animal.porte === porteSelecionado;
-      return especieMatch && porteMatch;
+      const sexoMatch = sexoSelecionado === "Todos" || animal.sexo === sexoSelecionado;
+
+      const idadeNumero = this.normalizeIdade(animal.idade);
+      const idadeMatch = this.state.idadeSelecionada === "Todos" ||
+                          (this.state.idadeSelecionada === 0 && idadeNumero < 1) || 
+                          (this.state.idadeSelecionada === 11 && idadeNumero > 10) || 
+                          this.state.idadeSelecionada === idadeNumero;
+      
+      const porteMatch = this.state.porteSelecionado === "Todos" || animal.porte === this.state.porteSelecionado;
+
+      const castracaoMatch = this.state.castracaoSelecionado === null ||
+                            (this.state.castracaoSelecionado === true && animal.castracao === "Sim") ||
+                            (this.state.castracaoSelecionado === false && animal.castracao === "Não");
+
+      const vermifugacaoMatch = this.state.vermifugoSelecionado === null ||
+      (this.state.vermifugoSelecionado === true && animal.vermifugo === "Sim") ||
+      (this.state.vermifugoSelecionado === false && animal.vermifugo === "Não");
+                    
+
+      return especieMatch && sexoMatch && idadeMatch && porteMatch && castracaoMatch && vermifugacaoMatch;
     });
 
     return (
@@ -142,6 +178,10 @@ class App extends Component {
           Não compre, adote!
         </Text>
 
+        <Text style={{ fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, textAlign: "center" }}>
+          Selecione a espécie desejada: 
+        </Text>
+
         <Picker
           selectedValue={this.state.especieSelecionada}
           style={{ height: 50, width: 200, alignSelf: "center" }}
@@ -152,15 +192,113 @@ class App extends Component {
           ))}
         </Picker>
 
+        <Text style={{fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, marginTop: 20, textAlign: "center" }}>
+          Selecione o sexo desejado:
+        </Text>
+
         <Picker
-          selectedValue={this.state.porteSelecionado}
+          selectedValue={this.state.sexoSelecionado}
           style={{ height: 50, width: 200, alignSelf: "center", marginTop: 10 }}
-          onValueChange={(itemValue) => this.handlePorteChange(itemValue)}
+          onValueChange={(itemValue) => this.handleSexoChange(itemValue)}
         >
-          {portes.map((porte) => (
-            <Picker.Item key={porte} label={porte} value={porte}/>
+          {sexos.map((sexo) => (
+            <Picker.Item key={sexo} label={sexo} value={sexo}/>
           ))}
         </Picker>
+
+        <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
+          <Text style={{ fontSize: 18, color: "#000", marginBottom: 5 }}>
+            Selecione a idade desejada:
+          </Text>
+
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={-1}
+            maximumValue={11}
+            step={1}
+            value={this.state.idadeSelecionada === "Todos" ? -1 : this.state.idadeSelecionada}
+            onValueChange={(valor) => this.setState({ idadeSelecionada: valor === -1 ? "Todos" : valor })}
+            minimumTrackTintColor="#006400"
+            maximumTrackTintColor="#d3d3d3"
+            thumbTintColor="#006400"
+          />
+
+          <Text style={{ fontSize: 16, textAlign: "center", marginTop: 10 }}>
+            {this.state.idadeSelecionada === "Todos" 
+            ? "Todos" : this.state.idadeSelecionada === 0 
+            ? "Filhote" : this.state.idadeSelecionada === 11 
+            ? "Idoso" : `${this.state.idadeSelecionada} anos`}
+          </Text>
+        </View>
+
+        <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
+          <Text style={{ fontSize: 18, color: "#000", marginBottom: 5 }}>
+            Selecione o porte desejado:
+          </Text>
+
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={0}
+            maximumValue={portes.length - 1} // Ajusta ao número de opções
+            step={1}
+            value={portes.indexOf(this.state.porteSelecionado)}
+            onValueChange={(valor) =>
+              this.setState({ porteSelecionado: portes[valor] })
+            }
+            minimumTrackTintColor="#006400"
+            maximumTrackTintColor="#d3d3d3"
+            thumbTintColor="#006400"
+          />
+          
+          <Text style={{ fontSize: 16, textAlign: "center", marginTop: 10 }}>
+            {this.state.porteSelecionado === "Todos" ? "Todos" : this.state.porteSelecionado}
+          </Text>
+        </View>
+
+        <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
+          <Text style={{ fontSize: 18, color: "#000", marginBottom: 10, textAlign: "center" }}>
+            Filtrar por castração:
+          </Text>
+
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+            <Text style={{ fontSize: 16, marginRight: 10 }}>
+              Sim
+            </Text>
+            <Switch
+              value={this.state.castracaoSelecionado === true}
+              onValueChange={(valor) =>
+                this.setState({ castracaoSelecionado: valor ? true : false })
+              }
+              trackColor={{ false: "#d3d3d3", true: "#006400" }}
+              thumbColor={this.state.castracaoSelecionado ? "#006400" : "#f4f3f4"}
+            />
+            <Text style={{ fontSize: 16, marginRight: 10 }}>
+              Não
+            </Text>
+          </View>
+
+          <Text style={{ fontSize: 18, color: "#000", marginBottom: 10, textAlign: "center" }}>
+            Filtrar por vermifugação:
+          </Text>
+
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ fontSize: 18, marginRight: 10 }}>
+              Sim
+            </Text>
+            <Switch
+              value={this.state.vermifugoSelecionado === true}
+              onValueChange={(valor) => 
+                this.setState({ vermifugoSelecionado: valor ? true : false })
+              }
+              trackColor={{ false: "#d3d3d3", true: "#006400" }}
+              thumbColor={this.state.vermifugoSelecionado ? "#006400" : "#f4f3f4"}
+            >
+            <Text style={{ fontSize: 16, marginLeft: 10 }}>
+              Não
+            </Text>
+            </Switch>
+          </View>
+        </View>
 
         {animaisFiltrados.map((animal) => (
           <TouchableOpacity
@@ -208,6 +346,7 @@ class App extends Component {
                       Vermífugo: {animal.vermifugo} {"\n"}
                       Localização: {animal.localizacao}{"\n"}
                       Idade: {animal.idade}{"\n"}
+                      Sexo: {animal.sexo}{"\n"}
                       Raça: {animal.raca}{"\n"}
                       Castração: {animal.castracao}{"\n"}
                       Porte: {animal.porte}{"\n"}
