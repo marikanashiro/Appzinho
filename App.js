@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity, Picker } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Picker, Alert } from "react-native";
 import Slider from '@react-native-community/slider';
-import { Switch } from "react-native-web";
+import { Button, Switch, TextInput } from "react-native-web";
 
 class App extends Component {
   constructor(props) {
@@ -17,7 +17,7 @@ class App extends Component {
           descricao: `🐾 Muito dócil, gosta de crianças, se dá bem com gatos e outros animais! Ela pede carinho com a patinha e ama carinho na barriga.
 ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
           vacina: "Sim",
-          vermifugo: "Sim!",
+          vermifugo: "Sim",
           localizacao: "Octogonal",
           idade: "1 ano", //ok
           sexo: "Fêmea", //ok
@@ -36,7 +36,7 @@ class App extends Component {
           descricao: `🐾 Super amorosa e adorável!
 ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
           vacina: "Sim!",
-          vermifugo: "Sim!",
+          vermifugo: "Não",
           localizacao: "Ponte Alta.",
           idade: "2 meses.",
           sexo: "Fêmea",
@@ -55,7 +55,7 @@ class App extends Component {
           descricao: `🐈 Se dá bem com todo mundo, extremamente carinhoso e carente. Adora carinho no pescoço e cabeça.
 ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
           vacina: "Sim, faltando apenas a múltipla.",
-          vermifugo: "sim.",
+          vermifugo: "Sim",
           localizacao: "Lago Norte.",
           idade: "2 anos.",
           sexo: "Macho",
@@ -74,7 +74,7 @@ class App extends Component {
           descricao: `🐤 Irritadinho, não se dá muito bem com animais de outras espécies, mas gosta de humanos. Gosta de um carinho ou outro na cabeça, mas prefere ficar no próprio canto. 
           ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
           vacina: "Sim.",
-          vermifugo: "Sim.",
+          vermifugo: "Sim",
           localizacao: "Candangolândia.",
           idade: "1 mês.",
           sexo: "Macho",
@@ -93,7 +93,7 @@ class App extends Component {
           descricao: `🐾 Idosinho super saudável, muito companheiro, adora passear e correr atrás de pássaros. Ama descansar perto dos humanos. 
           ⚠️ Adoção mediante assinatura de TERMO DE RESPONSABILIDADE.`,
           vacina: "Sim, todas em dia.",
-          vermifugo: "Sim.",
+          vermifugo: "Sim",
           localizacao: "Planaltina.",
           idade: "9 anos.",
           sexo: "Macho",
@@ -111,6 +111,20 @@ class App extends Component {
       porteSelecionado: "Todos",
       castracaoSelecionado: null,
       vermifugoSelecionado: null,
+      mostrarFormulario: false,
+      nome: '',
+      imagem: '',
+      descricao: '',
+      vacina: '',
+      vermifugo: '',
+      localizacao: '',
+      idade: '',
+      sexo: '',
+      raca: '',
+      castracao: '',
+      porte: '',
+      especie: '',
+      detalhes: '',
     };
   }
 
@@ -134,11 +148,31 @@ class App extends Component {
     return isNaN(idadeNum) ? 0 : idadeNum;
   }
 
+  handleFormulario = () => {
+    Alert.alert("Sucesso", "Animal cadastrado com sucesso!");
+    this.setState({
+      mostrarFormulario: false,
+      nome: '',
+      imagem: '',
+      descricao: '',
+      vacina: '',
+      vermifugo: '',
+      localizacao: '',
+      idade: '',
+      sexo: '',
+      raca: '',
+      castracao: '',
+      porte: '',
+      especie: '',
+      detalhes: '',
+    });
+  };
+
   render() {
     const especies = ["Todos", "Cachorro", "Gato", "Pássaro"];
     const sexos = ["Todos", "Fêmea", "Macho"];
     const portes = ["Todos", "Pequeno", "Médio", "Grande"];
-    const { especieSelecionada, sexoSelecionado, animais } = this.state;
+    const { especieSelecionada, sexoSelecionado, animais, mostrarFormulario } = this.state;
     const animaisFiltrados = animais.filter((animal) => {
       const especieMatch = especieSelecionada === "Todos" || animal.especie === especieSelecionada;
       const sexoMatch = sexoSelecionado === "Todos" || animal.sexo === sexoSelecionado;
@@ -156,8 +190,8 @@ class App extends Component {
                             (this.state.castracaoSelecionado === false && animal.castracao === "Não");
 
       const vermifugacaoMatch = this.state.vermifugoSelecionado === null ||
-      (this.state.vermifugoSelecionado === true && animal.vermifugo === "Sim") ||
-      (this.state.vermifugoSelecionado === false && animal.vermifugo === "Não");
+                                (this.state.vermifugoSelecionado === true && animal.vermifugo === "Sim") ||
+                                (this.state.vermifugoSelecionado === false && animal.vermifugo === "Não");
                     
 
       return especieMatch && sexoMatch && idadeMatch && porteMatch && castracaoMatch && vermifugacaoMatch;
@@ -177,6 +211,112 @@ class App extends Component {
         >
           Não compre, adote!
         </Text>
+
+        <Button 
+          title="Cadastrar animal"
+          onPress={() => this.setState({ mostrarFormulario: true })}
+          style={{ borderRadius: 5 }}
+        />
+
+        {mostrarFormulario && (
+          <View style={{ padding: 20 }}>
+            <TextInput 
+              placeholder="Nome"
+              value={this.state.nome}
+              onChangeText={(text) => this.setState({ nome: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Imagem"
+              value={this.state.imagem}
+              onChangeText={(text) => this.setState({ imagem: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Descrição"
+              value={this.state.descricao}
+              onChangeText={(text) => this.setState({ descricao: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Vacina"
+              value={this.state.vacina}
+              onChangeText={(text) => this.setState({ vacina: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Vermífugo"
+              value={this.state.vermifugo}
+              onChangeText={(text) => this.setState({ vermifugo: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Localização"
+              value={this.state.localizacao}
+              onChangeText={(text) => this.setState({ localizacao: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Idade"
+              value={this.state.idade}
+              onChangeText={(text) => this.setState({ idade: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Sexo"
+              value={this.state.sexo}
+              onChangeText={(text) => this.setState({ sexo: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Raça"
+              value={this.state.raca}
+              onChangeText={(text) => this.setState({ raca: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Castração"
+              value={this.state.castracao}
+              onChangeText={(text) => this.setState({ castracao: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Porte"
+              value={this.state.porte}
+              onChangeText={(text) => this.setState({ porte: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Espécie"
+              value={this.state.especie}
+              onChangeText={(text) => this.setState({ especie: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <TextInput 
+              placeholder="Detalhes"
+              value={this.state.detalhes}
+              onChangeText={(text) => this.setState({ detalhes: text })}
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+            />
+
+            <Button
+              title="Cadastrar"
+              onPress={this.handleFormulario}
+            />
+          </View>
+        )}
 
         <Text style={{ fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, textAlign: "center" }}>
           Selecione a espécie desejada: 
@@ -262,18 +402,17 @@ class App extends Component {
 
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
             <Text style={{ fontSize: 16, marginRight: 10 }}>
-              Sim
+              Não
             </Text>
             <Switch
               value={this.state.castracaoSelecionado === true}
               onValueChange={(valor) =>
-                this.setState({ castracaoSelecionado: valor ? true : false })
-              }
+                this.setState({ castracaoSelecionado: valor})}
               trackColor={{ false: "#d3d3d3", true: "#006400" }}
               thumbColor={this.state.castracaoSelecionado ? "#006400" : "#f4f3f4"}
             />
             <Text style={{ fontSize: 16, marginRight: 10 }}>
-              Não
+                Sim
             </Text>
           </View>
 
@@ -283,20 +422,19 @@ class App extends Component {
 
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 18, marginRight: 10 }}>
-              Sim
+              Não
             </Text>
             <Switch
               value={this.state.vermifugoSelecionado === true}
               onValueChange={(valor) => 
-                this.setState({ vermifugoSelecionado: valor ? true : false })
-              }
+                this.setState({ vermifugoSelecionado: valor})}
               trackColor={{ false: "#d3d3d3", true: "#006400" }}
               thumbColor={this.state.vermifugoSelecionado ? "#006400" : "#f4f3f4"}
-            >
+            />
             <Text style={{ fontSize: 16, marginLeft: 10 }}>
-              Não
+               Sim
             </Text>
-            </Switch>
+            
           </View>
         </View>
 
