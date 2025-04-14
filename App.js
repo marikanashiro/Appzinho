@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity, Picker, Alert } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Picker, Alert, Platform, Keyboard } from "react-native";
 import Slider from '@react-native-community/slider';
-import { Button, Switch, TextInput } from "react-native-web";
+import { Button, KeyboardAvoidingView, Modal, Switch, TextInput, TouchableWithoutFeedback } from "react-native-web";
 
 class App extends Component {
   constructor(props) {
@@ -148,26 +148,6 @@ class App extends Component {
     return isNaN(idadeNum) ? 0 : idadeNum;
   }
 
-  handleFormulario = () => {
-    Alert.alert("Sucesso", "Animal cadastrado com sucesso!");
-    this.setState({
-      mostrarFormulario: false,
-      nome: '',
-      imagem: '',
-      descricao: '',
-      vacina: '',
-      vermifugo: '',
-      localizacao: '',
-      idade: '',
-      sexo: '',
-      raca: '',
-      castracao: '',
-      porte: '',
-      especie: '',
-      detalhes: '',
-    });
-  };
-
   render() {
     const especies = ["Todos", "Cachorro", "Gato", "Pássaro"];
     const sexos = ["Todos", "Fêmea", "Macho"];
@@ -179,307 +159,203 @@ class App extends Component {
 
       const idadeNumero = this.normalizeIdade(animal.idade);
       const idadeMatch = this.state.idadeSelecionada === "Todos" ||
-                          (this.state.idadeSelecionada === 0 && idadeNumero < 1) || 
-                          (this.state.idadeSelecionada === 11 && idadeNumero > 10) || 
-                          this.state.idadeSelecionada === idadeNumero;
-      
+        (this.state.idadeSelecionada === 0 && idadeNumero < 1) ||
+        (this.state.idadeSelecionada === 11 && idadeNumero > 10) ||
+        this.state.idadeSelecionada === idadeNumero;
+
       const porteMatch = this.state.porteSelecionado === "Todos" || animal.porte === this.state.porteSelecionado;
 
       const castracaoMatch = this.state.castracaoSelecionado === null ||
-                            (this.state.castracaoSelecionado === true && animal.castracao === "Sim") ||
-                            (this.state.castracaoSelecionado === false && animal.castracao === "Não");
+        (this.state.castracaoSelecionado === true && animal.castracao === "Sim") ||
+        (this.state.castracaoSelecionado === false && animal.castracao === "Não");
 
       const vermifugacaoMatch = this.state.vermifugoSelecionado === null ||
-                                (this.state.vermifugoSelecionado === true && animal.vermifugo === "Sim") ||
-                                (this.state.vermifugoSelecionado === false && animal.vermifugo === "Não");
-                    
+        (this.state.vermifugoSelecionado === true && animal.vermifugo === "Sim") ||
+        (this.state.vermifugoSelecionado === false && animal.vermifugo === "Não");
+
 
       return especieMatch && sexoMatch && idadeMatch && porteMatch && castracaoMatch && vermifugacaoMatch;
     });
 
     return (
-      <ScrollView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
-        <Text
-          style={{
-            color: "#006400",
-            fontSize: 40,
-            marginTop: 30,
-            fontFamily: "Pacifico",
-            textAlign: "center",
-            marginBottom: 15,
-          }}
-        >
-          Não compre, adote!
-        </Text>
-
-        <Button 
-          title="Cadastrar animal"
-          onPress={() => this.setState({ mostrarFormulario: true })}
-          style={{ borderRadius: 5 }}
-        />
-
-        {mostrarFormulario && (
-          <View style={{ padding: 20 }}>
-            <TextInput 
-              placeholder="Nome"
-              value={this.state.nome}
-              onChangeText={(text) => this.setState({ nome: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Imagem"
-              value={this.state.imagem}
-              onChangeText={(text) => this.setState({ imagem: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Descrição"
-              value={this.state.descricao}
-              onChangeText={(text) => this.setState({ descricao: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Vacina"
-              value={this.state.vacina}
-              onChangeText={(text) => this.setState({ vacina: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Vermífugo"
-              value={this.state.vermifugo}
-              onChangeText={(text) => this.setState({ vermifugo: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Localização"
-              value={this.state.localizacao}
-              onChangeText={(text) => this.setState({ localizacao: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Idade"
-              value={this.state.idade}
-              onChangeText={(text) => this.setState({ idade: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Sexo"
-              value={this.state.sexo}
-              onChangeText={(text) => this.setState({ sexo: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Raça"
-              value={this.state.raca}
-              onChangeText={(text) => this.setState({ raca: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Castração"
-              value={this.state.castracao}
-              onChangeText={(text) => this.setState({ castracao: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Porte"
-              value={this.state.porte}
-              onChangeText={(text) => this.setState({ porte: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Espécie"
-              value={this.state.especie}
-              onChangeText={(text) => this.setState({ especie: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <TextInput 
-              placeholder="Detalhes"
-              value={this.state.detalhes}
-              onChangeText={(text) => this.setState({ detalhes: text })}
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-            />
-
-            <Button
-              title="Cadastrar"
-              onPress={this.handleFormulario}
-            />
-          </View>
-        )}
-
-        <Text style={{ fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, textAlign: "center" }}>
-          Selecione a espécie desejada: 
-        </Text>
-
-        <Picker
-          selectedValue={this.state.especieSelecionada}
-          style={{ height: 50, width: 200, alignSelf: "center" }}
-          onValueChange={(itemValue) => this.handleEspecieChange(itemValue)}
-        >
-          {especies.map((especie) => (
-            <Picker.Item key={especie} label={especie} value={especie}/>
-          ))}
-        </Picker>
-
-        <Text style={{fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, marginTop: 20, textAlign: "center" }}>
-          Selecione o sexo desejado:
-        </Text>
-
-        <Picker
-          selectedValue={this.state.sexoSelecionado}
-          style={{ height: 50, width: 200, alignSelf: "center", marginTop: 10 }}
-          onValueChange={(itemValue) => this.handleSexoChange(itemValue)}
-        >
-          {sexos.map((sexo) => (
-            <Picker.Item key={sexo} label={sexo} value={sexo}/>
-          ))}
-        </Picker>
-
-        <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
-          <Text style={{ fontSize: 18, color: "#000", marginBottom: 5 }}>
-            Selecione a idade desejada:
-          </Text>
-
-          <Slider
-            style={{ width: 200, height: 40 }}
-            minimumValue={-1}
-            maximumValue={11}
-            step={1}
-            value={this.state.idadeSelecionada === "Todos" ? -1 : this.state.idadeSelecionada}
-            onValueChange={(valor) => this.setState({ idadeSelecionada: valor === -1 ? "Todos" : valor })}
-            minimumTrackTintColor="#006400"
-            maximumTrackTintColor="#d3d3d3"
-            thumbTintColor="#006400"
-          />
-
-          <Text style={{ fontSize: 16, textAlign: "center", marginTop: 10 }}>
-            {this.state.idadeSelecionada === "Todos" 
-            ? "Todos" : this.state.idadeSelecionada === 0 
-            ? "Filhote" : this.state.idadeSelecionada === 11 
-            ? "Idoso" : `${this.state.idadeSelecionada} anos`}
-          </Text>
-        </View>
-
-        <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
-          <Text style={{ fontSize: 18, color: "#000", marginBottom: 5 }}>
-            Selecione o porte desejado:
-          </Text>
-
-          <Slider
-            style={{ width: 200, height: 40 }}
-            minimumValue={0}
-            maximumValue={portes.length - 1} // Ajusta ao número de opções
-            step={1}
-            value={portes.indexOf(this.state.porteSelecionado)}
-            onValueChange={(valor) =>
-              this.setState({ porteSelecionado: portes[valor] })
-            }
-            minimumTrackTintColor="#006400"
-            maximumTrackTintColor="#d3d3d3"
-            thumbTintColor="#006400"
-          />
-          
-          <Text style={{ fontSize: 16, textAlign: "center", marginTop: 10 }}>
-            {this.state.porteSelecionado === "Todos" ? "Todos" : this.state.porteSelecionado}
-          </Text>
-        </View>
-
-        <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
-          <Text style={{ fontSize: 18, color: "#000", marginBottom: 10, textAlign: "center" }}>
-            Filtrar por castração:
-          </Text>
-
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-            <Text style={{ fontSize: 16, marginRight: 10 }}>
-              Não
-            </Text>
-            <Switch
-              value={this.state.castracaoSelecionado === true}
-              onValueChange={(valor) =>
-                this.setState({ castracaoSelecionado: valor})}
-              trackColor={{ false: "#d3d3d3", true: "#006400" }}
-              thumbColor={this.state.castracaoSelecionado ? "#006400" : "#f4f3f4"}
-            />
-            <Text style={{ fontSize: 16, marginRight: 10 }}>
-                Sim
-            </Text>
-          </View>
-
-          <Text style={{ fontSize: 18, color: "#000", marginBottom: 10, textAlign: "center" }}>
-            Filtrar por vermifugação:
-          </Text>
-
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ fontSize: 18, marginRight: 10 }}>
-              Não
-            </Text>
-            <Switch
-              value={this.state.vermifugoSelecionado === true}
-              onValueChange={(valor) => 
-                this.setState({ vermifugoSelecionado: valor})}
-              trackColor={{ false: "#d3d3d3", true: "#006400" }}
-              thumbColor={this.state.vermifugoSelecionado ? "#006400" : "#f4f3f4"}
-            />
-            <Text style={{ fontSize: 16, marginLeft: 10 }}>
-               Sim
-            </Text>
-            
-          </View>
-        </View>
-
-        {animaisFiltrados.map((animal) => (
-          <TouchableOpacity
-            key={animal.id}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScrollView style={{ flex: 1, backgroundColor: "#f5f5f5" }} keyboardShouldPersistTaps="handled" >
+          <Text
             style={{
-              marginVertical: 10,
-              borderRadius: 10,
-              backgroundColor: "#fff",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 5 },
-              shadowOpacity: 0.2,
-              shadowRadius: 3,
-              elevation: 5,
+              color: "#006400",
+              fontSize: 40,
+              marginTop: 30,
+              fontFamily: "Pacifico",
+              textAlign: "center",
+              marginBottom: 15,
             }}
-            onPress={() => this.handlePress(animal.id)}
           >
-            <View style={{ alignItems: "center", marginBottom: 10 }}>
-              <Image 
-                source={animal.imagem}
-                style={{ width: 300, height: 500, borderRadius: 10, marginTop: 20 }}
-              />
+            Não compre, adote!
+          </Text>
 
-            <Text 
-              style={{fontSize: 24, color: "#006400", textAlign: "center", marginVertical: 10 }} >
-                {animal.nome}
+          <Text style={{ fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, textAlign: "center" }}>
+            Selecione a espécie desejada:
+          </Text>
+
+          <Picker
+            selectedValue={this.state.especieSelecionada}
+            style={{ height: 50, width: 200, alignSelf: "center" }}
+            onValueChange={(itemValue) => this.handleEspecieChange(itemValue)}
+          >
+            {especies.map((especie) => (
+              <Picker.Item key={especie} label={especie} value={especie} />
+            ))}
+          </Picker>
+
+          <Text style={{ fontSize: 18, color: "#000", marginLeft: 20, marginBottom: 5, marginTop: 20, textAlign: "center" }}>
+            Selecione o sexo desejado:
+          </Text>
+
+          <Picker
+            selectedValue={this.state.sexoSelecionado}
+            style={{ height: 50, width: 200, alignSelf: "center", marginTop: 10 }}
+            onValueChange={(itemValue) => this.handleSexoChange(itemValue)}
+          >
+            {sexos.map((sexo) => (
+              <Picker.Item key={sexo} label={sexo} value={sexo} />
+            ))}
+          </Picker>
+
+          <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
+            <Text style={{ fontSize: 18, color: "#000", marginBottom: 5 }}>
+              Selecione a idade desejada:
+            </Text>
+
+            <Slider
+              style={{ width: 200, height: 40 }}
+              minimumValue={-1}
+              maximumValue={11}
+              step={1}
+              value={this.state.idadeSelecionada === "Todos" ? -1 : this.state.idadeSelecionada}
+              onValueChange={(valor) => this.setState({ idadeSelecionada: valor === -1 ? "Todos" : valor })}
+              minimumTrackTintColor="#006400"
+              maximumTrackTintColor="#d3d3d3"
+              thumbTintColor="#006400"
+            />
+
+            <Text style={{ fontSize: 16, textAlign: "center", marginTop: 10 }}>
+              {this.state.idadeSelecionada === "Todos"
+                ? "Todos" : this.state.idadeSelecionada === 0
+                  ? "Filhote" : this.state.idadeSelecionada === 11
+                    ? "Idoso" : `${this.state.idadeSelecionada} anos`}
+            </Text>
+          </View>
+
+          <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
+            <Text style={{ fontSize: 18, color: "#000", marginBottom: 5 }}>
+              Selecione o porte desejado:
+            </Text>
+
+            <Slider
+              style={{ width: 200, height: 40 }}
+              minimumValue={0}
+              maximumValue={portes.length - 1} // Ajusta ao número de opções
+              step={1}
+              value={portes.indexOf(this.state.porteSelecionado)}
+              onValueChange={(valor) =>
+                this.setState({ porteSelecionado: portes[valor] })
+              }
+              minimumTrackTintColor="#006400"
+              maximumTrackTintColor="#d3d3d3"
+              thumbTintColor="#006400"
+            />
+
+            <Text style={{ fontSize: 16, textAlign: "center", marginTop: 10 }}>
+              {this.state.porteSelecionado === "Todos" ? "Todos" : this.state.porteSelecionado}
+            </Text>
+          </View>
+
+          <View style={{ marginVertical: 20, paddingHorizontal: 20, alignItems: "center" }}>
+            <Text style={{ fontSize: 18, color: "#000", marginBottom: 10, textAlign: "center" }}>
+              Filtrar por castração:
+            </Text>
+
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+              <Text style={{ fontSize: 16, marginRight: 10 }}>
+                Não
+              </Text>
+              <Switch
+                value={this.state.castracaoSelecionado === true}
+                onValueChange={(valor) =>
+                  this.setState({ castracaoSelecionado: valor })}
+                trackColor={{ false: "#d3d3d3", true: "#006400" }}
+                thumbColor={this.state.castracaoSelecionado ? "#006400" : "#f4f3f4"}
+              />
+              <Text style={{ fontSize: 16, marginRight: 10 }}>
+                Sim
               </Text>
             </View>
 
-            <View
-              style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10, alignItems: "center" }}
-            >
-              <Text
-                style={{ fontSize: 18, fontFamily: "Roboto", textAlign: "center", lineHeight: 24, width: 300 }}
-              >
-                {animal.descricao}
+            <Text style={{ fontSize: 18, color: "#000", marginBottom: 10, textAlign: "center" }}>
+              Filtrar por vermifugação:
+            </Text>
+
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ fontSize: 18, marginRight: 10 }}>
+                Não
+              </Text>
+              <Switch
+                value={this.state.vermifugoSelecionado === true}
+                onValueChange={(valor) =>
+                  this.setState({ vermifugoSelecionado: valor })}
+                trackColor={{ false: "#d3d3d3", true: "#006400" }}
+                thumbColor={this.state.vermifugoSelecionado ? "#006400" : "#f4f3f4"}
+              />
+              <Text style={{ fontSize: 16, marginLeft: 10 }}>
+                Sim
               </Text>
 
-              {this.state.animalSelecionado === animal.id && (
-                <View
-                 style={{marginTop: 10, padding: 10, backgroundColor: "#e6ffe6", borderRadius: 8 }} 
+            </View>
+          </View>
+
+          {animaisFiltrados.map((animal) => (
+            <TouchableOpacity
+              activeOpacity={1}
+              key={animal.id}
+              style={{
+                marginVertical: 10,
+                borderRadius: 10,
+                backgroundColor: "#fff",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 5 },
+                shadowOpacity: 0.2,
+                shadowRadius: 3,
+                elevation: 5,
+              }}
+              onPress={() => this.handlePress(animal.id)}
+            >
+              <View style={{ alignItems: "center", marginBottom: 10 }}>
+                <Image
+                  source={animal.imagem}
+                  style={{ width: 300, height: 500, borderRadius: 10, marginTop: 20 }}
+                />
+
+                <Text
+                  style={{ fontSize: 24, color: "#006400", textAlign: "center", marginVertical: 10 }} >
+                  {animal.nome}
+                </Text>
+              </View>
+
+              <View
+                style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10, alignItems: "center" }}
+              >
+                <Text
+                  style={{ fontSize: 18, fontFamily: "Roboto", textAlign: "center", lineHeight: 24, width: 300 }}
                 >
-                  <Text
-                    style={{fontSize: 16, color: "#006400", fontFamily: "Roboto", textAlign: "center" }}>
+                  {animal.descricao}
+                </Text>
+
+                {this.state.animalSelecionado === animal.id && (
+                  <View
+                    style={{ marginTop: 10, padding: 10, backgroundColor: "#e6ffe6", borderRadius: 8 }}
+                  >
+                    <Text
+                      style={{ fontSize: 16, color: "#006400", fontFamily: "Roboto", textAlign: "center" }}>
                       Vacina: {animal.vacina}{"\n"}
                       Vermífugo: {animal.vermifugo} {"\n"}
                       Localização: {animal.localizacao}{"\n"}
@@ -489,13 +365,89 @@ class App extends Component {
                       Castração: {animal.castracao}{"\n"}
                       Porte: {animal.porte}{"\n"}
                       Detalhes: {animal.detalhes}{"\n"}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+                    </Text>
+                    <Button
+                      title="Quero adotar!"
+                      onPress={() => this.setState({ mostrarFormulario: true, animalAtual: animal })}
+                      color="#006400"
+                    />
+
+                    {this.state.mostrarFormulario && (
+                      <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={this.state.mostrarFormulario}
+                        onRequestClose={() => this.setState({ mostrarFormulario: false })}
+                        presentationStyle="overFullScreen"
+                      >
+                        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} >
+                          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
+                            <TouchableOpacity activeOpacity={1} onPress={() => { }} style={{ width: "80%", backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                              <View style={{ width: "80%", backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                                <Text style={{ fontSize: 18, marginBottom: 10 }}>
+                                  Adote o(a) {this.state.animalAtual?.nome}!
+                                </Text>
+
+                                <TextInput
+                                  placeholder="Nome"
+                                  value={this.state.nomeAdotante}
+                                  onChangeText={(text) => this.setState({ nomeAdotante: text })}
+                                  style={{ height: 40, borderColor: "gray", borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 }}
+                                />
+
+                                <TextInput
+                                  placeholder="Telefone"
+                                  value={this.state.telefoneAdotante}
+                                  onChangeText={(text) => this.setState({ telefoneAdotante: text })}
+                                  style={{ height: 40, borderColor: "gray", borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 }}
+                                />
+
+                                <TextInput
+                                  placeholder="E-mail"
+                                  value={this.state.emailAdotante}
+                                  onChangeText={(text) => this.setState({ emailAdotante: text })}
+                                  style={{ height: 40, borderColor: "gray", borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 }}
+                                />
+
+                                <TextInput
+                                  placeholder="Endereço"
+                                  value={this.state.enderecoAdotante}
+                                  onChangeText={(text) => this.setState({ enderecoAdotante: text })}
+                                  style={{ height: 40, borderColor: "gray", borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 }}
+                                />
+
+                                <Button
+                                  title="Adotar!"
+                                  onPress={() => {
+                                    this.setState({
+                                      mostrarFormulario: false,
+                                      animalAtual: null,
+                                      nomeAdotante: "",
+                                      telefoneAdotante: "",
+                                      emailAdotante: "",
+                                      enderecoAdotante: ""
+                                    });
+                                  }}
+                                  color="#006400"
+                                />
+
+                                <Button
+                                  title="Fechar"
+                                  onPress={() => this.setState({ mostrarFormulario: false })}
+                                />
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      </Modal>
+                    )}
+                  </View>
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
