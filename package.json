@@ -2,6 +2,7 @@
   "name": "appzinho",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -11,10 +12,10 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
     "@react-native-community/slider": "4.5.5",
-    "@react-native-firebase/analytics": "^22.2.0",
-    "@react-native-firebase/app": "^22.2.0",
-    "@react-native-firebase/auth": "^22.2.0",
-    "@react-native-firebase/firestore": "^22.2.0",
+    "@react-native-firebase/analytics": "18.6.0",
+    "@react-native-firebase/app": "18.6.0",
+    "@react-native-firebase/auth": "18.6.0",
+    "@react-native-firebase/firestore": "18.6.0",
     "@react-native-google-signin/google-signin": "^14.0.1",
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/drawer": "^7.4.1",
