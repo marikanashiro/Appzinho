@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.appzinho.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -23,6 +24,26 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "firebase": {
+        "apiKey": "AIzaSyD_F2Di-GF6ybhx_EeW888JmmonlFa4svU",
+        "authDomain": "appzinho-dc9b3.firebaseapp.com",
+        "projectId": "appzinho-dc9b3",
+        "storageBucket": "appzinho-dc9b3.firebasestorage.app",
+        "messagingSenderId": "615703282311",
+        "appId": "1:615703282311:android:d32096d9aff3805abd2e22",
+        "measurementId": "G-XXX"
+      },
+      "googleSignIn": {
+        "webClientId": "615703282311-pbf9hqtelkp8idm8g88bla63t1m3qt64.apps.googleusercontent.com"
+      }
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/firestore",
+      "@react-native-firebase/analytics"
+    ]
   }
 }
