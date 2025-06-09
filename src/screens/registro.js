@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Text as ErrorText, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../firebaseConfig'; 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function RegistroScreen() {
@@ -16,7 +18,7 @@ export default function RegistroScreen() {
 
   useEffect(() => {
     validateFields();
-  }, []);
+  }, [nome, email, telefone, endereco, senha, repetirSenha]);
 
   const validateFields = () => {
     const newErrors = {};
@@ -26,6 +28,7 @@ export default function RegistroScreen() {
     if (!endereco.trim()) newErrors.endereco = 'Campo obrigatório';
     if (!senha.trim()) newErrors.senha = 'Campo obrigatório';
     if (!repetirSenha.trim()) newErrors.repetirSenha = 'Campo obrigatório';
+    if (senha && repetirSenha && senha !== repetirSenha) newErrors.repetirSenha = 'As senhas não coincidem';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -44,12 +47,34 @@ export default function RegistroScreen() {
 
   const handleSalvar = () => {
     if (validateFields()) {
-      // Simula o sucesso do cadastro (substitua por lógica real, ex.: Firebase)
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        navigation.navigate('Login');
-      }, 2000);
+      createUserWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          // Registro bem-sucedido
+          setModalVisible(true);
+          setTimeout(() => {
+            setModalVisible(false);
+            navigation.navigate('Login');
+          }, 2000);
+        })
+        .catch((error) => {
+          // Erro no registro
+          const newErrors = { ...errors };
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              newErrors.email = 'E-mail já está em uso';
+              break;
+            case 'auth/invalid-email':
+              newErrors.email = 'E-mail inválido';
+              break;
+            case 'auth/weak-password':
+              newErrors.senha = 'Senha muito fraca (mínimo 6 caracteres)';
+              break;
+            default:
+              newErrors.email = 'Erro ao registrar. Tente novamente.';
+          }
+          setErrors(newErrors);
+          console.error('Erro no registro:', error.message);
+        });
     }
   };
 
@@ -216,6 +241,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     color: '#9FB3C8',
+    alignItems: 'center',
   },
   inputSpacing: {
     height: 20, 

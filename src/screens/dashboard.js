@@ -35,7 +35,7 @@ export default function DashboardScreen() {
         showsVerticalScrollIndicator={false}
         onEndReached={loadMoreAnimals}
         onEndReachedThreshold={0.5}
-        style={{ flex: 1 }}
+        style={{ flex: 1 }} // Garante que o FlatList ocupe a altura total
       />
     </View>
   );

@@ -8,7 +8,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return null; // Ou um ActivityIndicator
+    return null; 
   }
 
   return <Navigation />;

@@ -130,11 +130,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignItems: 'center',
-    paddingTop: 10,
+    alignItems: 'center', 
+    paddingTop: 10, 
   },
   profileIcon: {
-    marginTop: 20,
+    marginTop: 20, 
     marginBottom: 20,
   },
   input: {
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     marginVertical: 20,
-    textAlign: 'left',
+    textAlign: 'left', 
   },
   historyTitle: {
     fontFamily: 'Roboto',

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../firebaseConfig'; // Importa a configuração do Firebase
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function LoginScreen() {
@@ -10,11 +12,16 @@ export default function LoginScreen() {
   const navigation = useNavigation();
 
   const handleLogin = () => {
-    if (email === 'fulano@mail.com' && password === '123') {
-      navigation.navigate('Dashboard');
-    } else {
-      setModalVisible(true);
-    }
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Login bem-sucedido, navega para Dashboard
+        navigation.navigate('Main', { screen: 'Dashboard' });
+      })
+      .catch((error) => {
+        // Erro no login, exibe modal
+        setModalVisible(true);
+        console.error('Erro no login:', error.message);
+      });
   };
 
   return (
@@ -40,7 +47,7 @@ export default function LoginScreen() {
         secureTextEntry
       />
       <Button title="Entrar" onPress={handleLogin} color="#9A554C" />
-      <Text style={styles.register} onPress={() => { navigation.navigate('Dashboard'); }}>
+      <Text style={styles.register} onPress={() => navigation.navigate('Registro')}>
         Registrar
       </Text>
       <Modal
