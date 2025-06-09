@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native'; 
+import { auth } from '../../firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig';
 
 export default function PerfilScreen() {
   const navigation = useNavigation();
@@ -12,9 +16,34 @@ export default function PerfilScreen() {
   const [endereco, setEndereco] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleSalvar = () => {
-    setModalVisible(true);
-    setTimeout(() => setModalVisible(false), 2000);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setEmail(user.email); 
+        const userDoc = await getDoc(doc(firestore, 'usuarios', user.uid)); 
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setNome(data.nome || '');
+          setTelefone(data.telefone || '');
+          setEndereco(data.endereco || '');
+        }
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleSalvar = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      await setDoc(doc(firestore, 'usuarios', user.uid), {
+        email: user.email,
+        nome: user.nome,
+        telefone: user.telefone,
+        endereco: user.endereco,
+      }, { merge: true }); 
+      setModalVisible(true);
+      setTimeout(() => setModalVisible(false), 2000);
+    }
   };
 
   const handleFechar = () => {
@@ -41,7 +70,7 @@ export default function PerfilScreen() {
           onChangeText={setEmail}
           placeholder="E-mail: fulano@mail.com"
           placeholderTextColor="#9FB3C8"
-          editable={true}
+          editable={false} 
         />
         <TextInput
           style={styles.input}
