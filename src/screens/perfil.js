@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Para o ícone de perfil
+import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
-import { DrawerActions } from '@react-navigation/native'; // Corrigindo importação ausente
+import { DrawerActions } from '@react-navigation/native'; 
 
 export default function PerfilScreen() {
   const navigation = useNavigation();
@@ -130,11 +130,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignItems: 'center', // Centraliza os elementos do conteúdo
-    paddingTop: 10, // Pequeno espaçamento após o header
+    alignItems: 'center',
+    paddingTop: 10,
   },
   profileIcon: {
-    marginTop: 20, // 130 (header) + 103 = 233px do topo
+    marginTop: 20,
     marginBottom: 20,
   },
   input: {
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     marginVertical: 20,
-    textAlign: 'left', // Texto à esquerda
+    textAlign: 'left',
   },
   historyTitle: {
     fontFamily: 'Roboto',
