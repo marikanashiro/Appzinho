@@ -1,60 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import axios from 'axios';
+import React from 'react';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import usePetfinder from '../hooks/usePetfinder';
+import AnimalCard from '../components/JS_animais';
 
 export default function DashboardScreen() {
-  const [animals, setAnimals] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-
-  useEffect(() => {
-    fetchAnimals();
-  }, []);
-
-  const fetchAnimals = async () => {
-  try {
-    const tokenResponse = await axios.post('https://api.petfinder.com/v2/oauth2/token', {
-      grant_type: 'client_credentials',
-      client_id: 'ePVez3CpBfcmo2lS54LE0WynpKkkx7Xxx6BdDIGGRsxBQK6fta',
-      client_secret: 'tMx14nYyJ6T0Satu7d0i23cxAaQptW4SN4EnGgIq',
-    });
-    const accessToken = tokenResponse.data.access_token;
-
-    const animalsResponse = await axios.get('https://api.petfinder.com/v2/animals', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    setAnimals(animalsResponse.data.animals || []);
-  } catch (error) {
-    console.error('Erro ao buscar animais:', error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const renderAnimalItem = ({ item }) => (
-    <View style={styles.card}>
-      <Image
-        style={styles.image}
-        source={{ uri: item.photos[0]?.medium || 'https://via.placeholder.com/150' }}
-      />
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.description}>{item.description || 'Sem descrição disponível'}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => alert('Ver detalhes: ' + item.name)}>
-        <Text style={styles.buttonText}>Ver detalhes</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const { animals, loading, loadMoreAnimals } = usePetfinder();
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
   };
 
-  if (loading) {
-    return <Text style={styles.loading}>Carregando...</Text>;
+  if (loading && animals.length === 0) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#9A554C" />
+      </View>
+    );
   }
 
   return (
@@ -65,9 +29,13 @@ export default function DashboardScreen() {
       <Text style={styles.title}>Não compre, adote!</Text>
       <FlatList
         data={animals}
-        renderItem={renderAnimalItem}
+        renderItem={({ item }) => <AnimalCard animal={item} />}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        onEndReached={loadMoreAnimals}
+        onEndReachedThreshold={0.5}
+        style={{ flex: 1 }}
       />
     </View>
   );
@@ -77,79 +45,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-    alignItems: 'center',
   },
   menuButton: {
     position: 'absolute',
     top: 10,
-    left: 10,
+    marginTop: 35,
+    left: 17,
     zIndex: 1,
   },
   menuIcon: {
     fontSize: 24,
+    marginTop: 35,
     color: '#9A554C',
   },
   title: {
     fontFamily: 'Pacifico',
     fontSize: 24,
     textAlign: 'center',
-    marginVertical: 20,
     color: '#9A554C',
+    marginTop: 70,
+    marginBottom: 37,
+    width: '100%',
+    paddingHorizontal: 20,
   },
   list: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    marginBottom: 20,
-    padding: 10,
-    width: 343,
     alignItems: 'center',
-    elevation: 2, // Sombra no Android
-    shadowColor: '#000', // Sombra no iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
-  image: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
-  },
-  name: {
-    fontFamily: 'Roboto',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: '#9A554C',
-  },
-  description: {
-    fontFamily: 'Roboto',
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    marginVertical: 5,
-  },
-  button: {
-    backgroundColor: '#9A554C',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  buttonText: {
-    fontFamily: 'Roboto',
-    fontSize: 16,
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  loading: {
+  loadingContainer: {
     flex: 1,
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 18,
-    color: '#9A554C',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
   },
 });

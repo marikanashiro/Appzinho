@@ -40,7 +40,7 @@ export default function LoginScreen() {
         secureTextEntry
       />
       <Button title="Entrar" onPress={handleLogin} color="#9A554C" />
-      <Text style={styles.register} onPress={() => { navigation.navigate('Registro'); }}>
+      <Text style={styles.register} onPress={() => { navigation.navigate('Dashboard'); }}>
         Registrar
       </Text>
       <Modal
